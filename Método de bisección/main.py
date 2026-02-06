@@ -12,7 +12,7 @@ import sympy as sp
 @:param b: límite superior del intervalo
 @:param epsilon: tolerancia para la aproximación de la raíz (opcional, por defecto 1e-3)
 @:param M: número máximo de iteraciones para evitar bucles infinitos
-@:brief Esta función implementa el método de bisección para encontrar una raíz de dada función f
+@:brief Este programa implementa el método de bisección para encontrar una raíz de dada función f
  continua en el intervalo [a, b]
 """
 def main():
