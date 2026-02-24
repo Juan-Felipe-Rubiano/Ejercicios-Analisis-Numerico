@@ -4,7 +4,12 @@ Description: Método del punto fijo para encontrar raíces de funciones
 Constraints: La función g(x) debe cumplir |g'(p_0)| < 1 cerca del punto inicial para garantizar convergencia
 """
 
+import matplotlib
+matplotlib.use("TkAgg")
+
 import sympy as sp
+import numpy as np
+import matplotlib.pyplot as plt
 from Salida import Salida
 
 
@@ -77,6 +82,7 @@ def punto_fijo(f_in, p_0, m = 10, epsilon=1e-3, es_funcion_f=True):
             raise ValueError("Programa terminado por el usuario debido a posible no convergencia\n")
 
     g = sp.lambdify(x, expr_g, "math")
+    iteraciones = [p_0]
 
     i = 0
     p_n = p_0
@@ -84,13 +90,49 @@ def punto_fijo(f_in, p_0, m = 10, epsilon=1e-3, es_funcion_f=True):
         p_n_1 = g(p_n)
         err = abs(p_n_1 - p_n)
 
+        iteraciones.append(p_n_1)
         if err <= epsilon:
+            graficar(expr_g, iteraciones)
             return p_n_1
         p_n = p_n_1
         print(f"i={i+1}; p: {p_n_1}; error: {err}")
 
         i += 1
+        graficar(expr_g, iteraciones)
     raise ValueError("No se ha podido llegar a la tolerancia deseada en el número de iteraciones digitado")
+
+def graficar(expr_g, iteraciones):
+    x = sp.symbols('x')
+    g = sp.lambdify(x, expr_g, "numpy")
+
+    xs = np.linspace(min(iteraciones)-1, max(iteraciones)+1, 400)
+
+    plt.figure()
+
+    # g(x)
+    plt.plot(xs, g(xs), label="g(x)")
+
+    # recta y = x
+    plt.plot(xs, xs, linestyle="--", label="y = x")
+
+    # telaraña
+    for i in range(len(iteraciones)-1):
+        x0 = iteraciones[i]
+        x1 = iteraciones[i+1]
+
+        # vertical
+        plt.plot([x0, x0], [x0, x1])
+
+        # horizontal
+        plt.plot([x0, x1], [x1, x1])
+
+    plt.xlabel("x")
+    plt.ylabel("y")
+    plt.title("Método del Punto Fijo")
+    plt.legend()
+    plt.grid()
+    plt.show()
+    #azul g(x), linea naranja y = x cruce es punto fijo, telaraña es secuencia de iteraciones(cada iteracion va de x_n a tocar la curva y eso es g(x_0)), verticales desde iteracion i a g(iteracion i), horizontales desde g(iteracion i) a iteracion i+1, convergencia es cuando se acercan a punto fijo, divergencia es cuando se alejan del punto fijo
 
 
 if __name__ == "__main__":
